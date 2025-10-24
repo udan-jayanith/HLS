@@ -98,3 +98,67 @@ func (plt *PlayListTokenizer) Advanced() (PlaylistToken, error) {
 		}
 	}
 }
+
+type AttributeValueType int
+
+const (
+	// String of characters from the set
+	// [0..9] expressing an integer in base-10 arithmetic in the range
+	// from 0 to 2^64-1 (18446744073709551615).  A decimal-integer may be
+	// from 1 to 20 characters long.
+	DecimalInteger AttributeValueType = iota
+	// String of characters from the
+	// set [0..9] and [A..F] that is prefixed with 0x or 0X.  The maximum
+	// length of a hexadecimal-sequence depends on its AttributeNames.
+	HexadecimalSequence
+	// String of characters from the
+	// set [0..9] and '.' that expresses a non-negative floating-point
+	// number in decimal positional notation.
+	DecimalFloatingPoint
+	// String of characters
+	// from the set [0..9], '-', and '.' that expresses a signed
+	// floating-point number in decimal positional notation.
+	SignedDecimalFloatingPoint
+	// String of characters that does not have line feed (0xA), carriage return (0xD), or double
+	// quote (0x22).
+	QuotedString
+	// Character string from a set that is
+	// explicitly defined by the AttributeName.  An enumerated-string
+	// will never contain double quotes ("), commas (,), or whitespace.
+	EnumeratedString
+	//Two decimal-integers separated by the "x"
+	// character.  The first integer is a horizontal pixel dimension
+	// (width); the second is a vertical pixel dimension (height).
+	DecimalResolution
+)
+
+type AttributeValuePair struct {
+	Type          AttributeValueType
+	AttributeName string
+	Value         string
+}
+
+type HLSTag struct {
+	TagName string
+	// Certain tags have values that are attribute-lists.  An attribute-list
+	// is a comma-separated list of attribute/value pairs with no
+	// whitespace.
+	AttributeList []AttributeValuePair
+}
+
+/*
+type AttributeListTokenizer struct {
+	value string
+}
+
+func NewAttributeListTokenizer(tagValue string) AttributeListTokenizer {
+	return AttributeListTokenizer{
+		value: tagValue,
+	}
+}
+
+func (alt *AttributeListTokenizer) Advanced() (string, error) {
+
+}
+
+*/
