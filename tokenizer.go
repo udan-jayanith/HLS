@@ -29,7 +29,7 @@ func (t LineType) String() string {
 	case blank:
 		return "blank"
 	}
-	panic("Unknown LineType")
+	return "Unknown LineType"
 }
 
 func isTag(line string) bool {
