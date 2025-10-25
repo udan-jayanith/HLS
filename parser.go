@@ -40,6 +40,7 @@ const (
 )
 */
 
+/*
 type AttributeValuePair struct {
 	// An AttributeName is an unquoted string containing characters from the
 	// set [A..Z], [0..9] and '-'.  Therefore, AttributeNames contain only
@@ -47,6 +48,7 @@ type AttributeValuePair struct {
 	AttributeName string
 	Value         string
 }
+*/
 
 type HLSTag struct {
 	TagName string
@@ -116,3 +118,31 @@ func getCSV_Token(csv string, readPosition int) (string, int) {
 
 	return csv[readPosition:enp], n + 1
 }
+
+var (
+	InvalidAttributeValuePair error = errors.New("Invalid attribute value pair")
+	ContainsInvalidSpaces     error = errors.New("Contains invalid spaces")
+)
+
+func ParseAttributeList(attributeList string) (map[string]string, error) {
+	csvs := ParseCSV(attributeList)
+	attributeValuePairs := make(map[string]string, len(csvs))
+
+	for _, csv := range csvs {
+		rp := 0
+		for rp < len(csv) && csv[rp] != '=' {
+			rp++
+		}
+
+		//Returns a error if '=' sign is the last character of the csv or if csv[rp] is the last character or if csv[rp] sign is the first character.
+		if rp >= len(csv)-1 || rp == 0 {
+			return attributeValuePairs, InvalidAttributeValuePair
+		} else if csv[rp-1] == ' ' || csv[rp+1] == ' ' {
+			return attributeValuePairs, ContainsInvalidSpaces
+		}
+		attributeValuePairs[csv[:rp]] = strings.Trim(csv[rp+1:], `"`)
+	}
+	return attributeValuePairs, nil
+}
+
+//ParseResolution
