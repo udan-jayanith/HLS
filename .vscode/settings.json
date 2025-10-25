@@ -1,3 +1,13 @@
 {
-	"cSpell.words": ["BYTERANGE", "DATERANGE", "EXTINF", "EXTM", "EXTXVERSION", "KEYFORMAT"]
+	"cSpell.words": [
+		"BYTERANGE",
+		"DATERANGE",
+		"ENDLIST",
+		"EXTINF",
+		"EXTM",
+		"EXTXVERSION",
+		"KEYFORMAT",
+		"Multivariant",
+		"TARGETDURATION"
+	]
 }
