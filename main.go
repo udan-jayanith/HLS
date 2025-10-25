@@ -38,7 +38,7 @@ const (
 	//[4.3.1.2]
 	//
 	//[4.3.1.2]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.1.2
-	EXT_X_VERSION = "EXT-X-VERSION"
+	EXT_X_VERSION PlaylistTag = "EXT-X-VERSION"
 
 	//Media Segment Tags
 	//Each Media Segment is specified by a series of Media Segment tags
@@ -57,7 +57,7 @@ const (
 	//[4.3.2.1]
 	//
 	//[4.3.2.1]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.1
-	EXTINF = "EXTINF"
+	EXTINF PlaylistTag = "EXTINF"
 	//The EXT-X-BYTERANGE tag indicates that a Media Segment is a sub-range
 	//of the resource identified by its URI.  It applies only to the next
 	//URI line that follows it in the Playlist.  Its format is:
@@ -67,7 +67,7 @@ const (
 	//[4.3.2.2]
 	//
 	//[4.3.2.2]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.2
-	EXT_X_BYTERANGE = "EXT-X-BYTERANGE"
+	EXT_X_BYTERANGE PlaylistTag = "EXT-X-BYTERANGE"
 	//The EXT-X-DISCONTINUITY tag indicates a discontinuity between the
 	//Media Segment that follows it and the one that preceded it.
 	//
@@ -78,7 +78,7 @@ const (
 	//[4.3.2.3]
 	//
 	//[4.3.2.3]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.3
-	EXT_X_DISCONTINUITY = "EXT-X-DISCONTINUITY"
+	EXT_X_DISCONTINUITY PlaylistTag = "EXT-X-DISCONTINUITY"
 	//Media Segments MAY be encrypted.  The EXT-X-KEY tag specifies how to
 	//decrypt them.  It applies to every Media Segment and to every Media
 	//Initialization Section declared by an EXT-X-MAP tag that appears
@@ -93,7 +93,7 @@ const (
 	//[4.3.2.4]
 	//
 	//[4.3.2.4]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.4
-	EXT_X_KEY = "EXT-X-KEY"
+	EXT_X_KEY PlaylistTag = "EXT-X-KEY"
 	//The EXT-X-MAP tag specifies how to obtain the Media Initialization
 	//Section (Section 3) required to parse the applicable Media Segments.
 	//It applies to every Media Segment that appears after it in the
@@ -107,7 +107,7 @@ const (
 	//[4.3.2.5]
 	//
 	//[4.3.2.5]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.5
-	EXT_X_MAP = "EXT-X-MAP"
+	EXT_X_MAP PlaylistTag = "EXT-X-MAP"
 	//The EXT-X-PROGRAM-DATE-TIME tag associates the first sample of a
 	//Media Segment with an absolute date and/or time.  It applies only to
 	//the next Media Segment.  Its format is:
@@ -117,7 +117,7 @@ const (
 	//[4.3.2.6]
 	//
 	//[4.3.2.6]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.6
-	EXT_X_PROGRAM_DATE_TIME = "EXT-X-PROGRAM-DATE-TIME"
+	EXT_X_PROGRAM_DATE_TIME PlaylistTag = "EXT-X-PROGRAM-DATE-TIME"
 	//  The EXT-X-DATERANGE tag associates a Date Range (i.e., a range of
 	//time defined by a starting and ending date) with a set of attribute/
 	//value pairs.  Its format is:
@@ -127,8 +127,8 @@ const (
 	//[4.3.2.7]
 	//
 	//[4.3.2.7]: https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.2.7
-	EXT_X_DATERANGE = "EXT-X-DATERANGE"
-	
+	EXT_X_DATERANGE PlaylistTag = "EXT-X-DATERANGE"
+
 	//Media Playlist Tags
 	//
 	//Media Playlist tags describe global parameters of the Media Playlist.
