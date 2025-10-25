@@ -81,7 +81,7 @@ type PlaylistToken struct {
 // Advanced read from plt.rd until '\n' and returns a Token and a error. Advanced return an error io.EOF if reading is finished.
 // If error is not nil or io.EOF hls file is broken.
 // Advanced does not returns blank lines.
-func (plt *PlayListTokenizer) Advanced() (PlaylistToken, error) {
+func (plt *PlayListTokenizer) Advance() (PlaylistToken, error) {
 	for {
 		token := PlaylistToken{}
 		line, err := plt.rd.ReadString('\n')
@@ -98,20 +98,3 @@ func (plt *PlayListTokenizer) Advanced() (PlaylistToken, error) {
 		}
 	}
 }
-
-/*
-type AttributeListTokenizer struct {
-	value string
-}
-
-func NewAttributeListTokenizer(tagValue string) AttributeListTokenizer {
-	return AttributeListTokenizer{
-		value: tagValue,
-	}
-}
-
-func (alt *AttributeListTokenizer) Advanced() (string, error) {
-
-}
-
-*/

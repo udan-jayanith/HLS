@@ -253,5 +253,54 @@ func TestParseAttributeList(t *testing.T) {
 			t.Fatal("Attributes contains unexpected key value pairs")
 		}
 	}
+}
 
+func TestParseDecimalResolution(t *testing.T) {
+	{
+		resolution, err := HLS.ParseResolution("1024x720")
+		if err != nil {
+			t.Log("Unexpected error")
+			t.Fatal(err)
+		} else if resolution.Width != 1024 {
+			t.Fatal("Expected width of 1024 but got", resolution.Width)
+		} else if resolution.Height != 720 {
+			t.Fatal("Expected height of 720 but got", resolution.Height)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution(""); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution(" "); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution("1024x"); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution("x720"); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution("x"); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
+
+	{
+		if _, err := HLS.ParseResolution("a"); err != HLS.InvalidDecimalResolution {
+			t.Fatal("Expected error", HLS.InvalidDecimalResolution, "but got", err)
+		}
+	}
 }

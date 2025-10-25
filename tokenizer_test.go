@@ -17,7 +17,7 @@ func TestPlaylistTokenizer(t *testing.T) {
 
 	playlistTokenizer := HLS.NewPlayListTokenizer(file)
 	for {
-		token, err := playlistTokenizer.Advanced()
+		token, err := playlistTokenizer.Advance()
 		if err == io.EOF {
 			break
 		} else if err != nil {

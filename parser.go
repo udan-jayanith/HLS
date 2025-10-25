@@ -2,53 +2,9 @@ package HLS
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 )
-
-/*
-type AttributeValueType int
-
-const (
-	// String of characters from the set
-	// [0..9] expressing an integer in base-10 arithmetic in the range
-	// from 0 to 2^64-1 (18446744073709551615).  A decimal-integer may be
-	// from 1 to 20 characters long.
-	DecimalInteger AttributeValueType = iota
-	// String of characters from the
-	// set [0..9] and [A..F] that is prefixed with 0x or 0X.  The maximum
-	// length of a hexadecimal-sequence depends on its AttributeNames.
-	HexadecimalSequence
-	// String of characters from the
-	// set [0..9] and '.' that expresses a non-negative floating-point
-	// number in decimal positional notation.
-	DecimalFloatingPoint
-	// String of characters
-	// from the set [0..9], '-', and '.' that expresses a signed
-	// floating-point number in decimal positional notation.
-	SignedDecimalFloatingPoint
-	// String of characters that does not have line feed (0xA), carriage return (0xD), or double
-	// quote (0x22).
-	QuotedString
-	// Character string from a set that is
-	// explicitly defined by the AttributeName.  An enumerated-string
-	// will never contain double quotes ("), commas (,), or whitespace.
-	EnumeratedString
-	//Two decimal-integers separated by the "x"
-	// character.  The first integer is a horizontal pixel dimension
-	// (width); the second is a vertical pixel dimension (height).
-	DecimalResolution
-)
-*/
-
-/*
-type AttributeValuePair struct {
-	// An AttributeName is an unquoted string containing characters from the
-	// set [A..Z], [0..9] and '-'.  Therefore, AttributeNames contain only
-	// uppercase letters, not lowercase.
-	AttributeName string
-	Value         string
-}
-*/
 
 type HLSTag struct {
 	TagName string
@@ -145,4 +101,45 @@ func ParseAttributeList(attributeList string) (map[string]string, error) {
 	return attributeValuePairs, nil
 }
 
-//ParseResolution
+type Resolution struct {
+	Width, Height int
+}
+
+var (
+	InvalidDecimalResolution error = errors.New("Invalid decimal resolution")
+)
+
+// decimalResolution: two decimal-integers separated by the "x"
+// character.  The first integer is a horizontal pixel dimension
+// (width); the second is a vertical pixel dimension (height).
+//
+// ParseResolution parses decimalResolution and returns Resolution
+func ParseResolution(decimalResolution string) (Resolution, error) {
+	//1024x720
+	if len(decimalResolution) == 0 || decimalResolution[0] == 'x' || decimalResolution[len(decimalResolution)-1] == 'x' {
+		return Resolution{}, InvalidDecimalResolution
+	}
+
+	xPosition := 0
+	for xPosition < len(decimalResolution) && decimalResolution[xPosition] != 'x' {
+		xPosition++
+	}
+	if xPosition >= len(decimalResolution)-1 {
+		return Resolution{}, InvalidDecimalResolution
+	}
+
+	width, err := strconv.Atoi(decimalResolution[:xPosition])
+	if err != nil {
+		return Resolution{}, err
+	}
+
+	height, err := strconv.Atoi(decimalResolution[xPosition+1:])
+	if err != nil {
+		return Resolution{}, err
+	}
+
+	return Resolution{
+		Width:  width,
+		Height: height,
+	}, nil
+}
