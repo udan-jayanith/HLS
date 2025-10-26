@@ -80,6 +80,8 @@ var (
 	ContainsInvalidSpaces     error = errors.New("Contains invalid spaces")
 )
 
+// ParseAttributeList parses the attribute list and returns a map as attribute/value pair and a error.
+// quoted-strings double quotes get removed.
 func ParseAttributeList(attributeList string) (map[string]string, error) {
 	csvs := ParseCSV(attributeList)
 	attributeValuePairs := make(map[string]string, len(csvs))
