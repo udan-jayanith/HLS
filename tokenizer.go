@@ -63,7 +63,8 @@ func getLineType(line string) LineType {
 }
 
 type PlayListTokenizer struct {
-	rd *bufio.Reader
+	rd       *bufio.Reader
+	eofError error
 }
 
 // NewPlayListTokenizer returns a new PlayListTokenizer
@@ -78,20 +79,35 @@ type PlaylistToken struct {
 	Value string
 }
 
-// Advanced read from plt.rd until '\n' and returns a Token and a error. Advanced return an error io.EOF if reading is finished.
+// Advanced read from plt.rd(hls playlist) until '\n' and returns a Token and a error. Advanced return an error io.EOF if reading is finished.
 // If error is not nil or io.EOF hls file is broken.
-// Advanced does not returns blank lines.
+// Advanced does not returns blank line types.
+// If token type is a Comment or a Tag '#' prefix get removed.
 func (plt *PlayListTokenizer) Advance() (PlaylistToken, error) {
 	for {
 		token := PlaylistToken{}
+		if plt.eofError != nil {
+			return token, plt.eofError
+		}
+
 		line, err := plt.rd.ReadString('\n')
-		if err != nil {
+		if err == io.EOF {
+			plt.eofError = err
+		} else if err != nil {
 			return token, err
 		}
 
 		line = strings.TrimSpace(line)
 		token.Type = getLineType(line)
-		token.Value = line
+
+		if token.Type == Comment || token.Type == Tag {
+			token.Value = strings.TrimLeft(line, "#")
+		} else {
+			token.Value = line
+		}
+		if token.Type == Tag {
+			token.Value = strings.TrimRight(token.Value, ",")
+		}
 
 		if token.Type != blank {
 			return token, nil
