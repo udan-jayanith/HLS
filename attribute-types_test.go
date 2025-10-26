@@ -1,16 +1,51 @@
 package HLS_test
 
-import "testing"
+import (
+	"HLS"
+	"testing"
+)
 
 func TestIsDecimalInteger(t *testing.T) {
-	//184467440737095516150
-	//"16363"
-	//""
-	//" "
-	//1
-	//-1
-	//10
-	//18446744073709551615
+	{
+		if HLS.IsDecimalInteger("184467440737095516150") {
+			t.Fatal("Expected to return false")
+		}
+	}
+	{
+		if HLS.IsDecimalInteger(`"16363"`) {
+			t.Fatal("Expected to return false")
+		}
+	}
+	{
+		if HLS.IsDecimalInteger(``) {
+			t.Fatal("Expected to return false")
+		}
+	}
+	{
+		if HLS.IsDecimalInteger(` `) {
+			t.Fatal("Expected to return false")
+		}
+	}
+	{
+		if !HLS.IsDecimalInteger(`1`) {
+			t.Fatal("Expected to return true")
+		}
+	}
+	{
+		if HLS.IsDecimalInteger(`-1`) {
+			t.Fatal("Expected to return false")
+		}
+	}
+	{
+		if !HLS.IsDecimalInteger(`10`) {
+			t.Fatal("Expected to return true")
+		}
+	}
+	{
+		if !HLS.IsDecimalInteger(`18446744073709551615`) {
+			t.Fatal("Expected to return true")
+		}
+	}
 }
 
 func TestIsHexadecimalSequence(t *testing.T) {
