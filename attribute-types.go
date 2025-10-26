@@ -22,6 +22,9 @@ func IsDecimalInteger(value string) bool {
 //set [0..9] and [A..F].  The maximum
 //length of a hexadecimal-sequence depends on its AttributeNames.
 func IsHexadecimalSequence(value string) bool {
+	if value == "" {
+		return false
+	}
 	for _, char := range value {
 		if !(char >= '0' && char <= '9') && !(char >= 'A' && char <= 'Z') {
 			return false
@@ -34,9 +37,16 @@ func IsHexadecimalSequence(value string) bool {
 //set [0..9] and '.' that expresses a non-negative floating-point
 //number in decimal positional notation.
 func IsDecimalFloatingPoint(value string) bool {
+	if value == "" {
+		return false
+	}
+	var dot bool
 	for _, char := range value {
-		if (char < '0' || char > '9') && char != '.' {
+		if (char < '0' || char > '9') && char != '.' || dot && char == '.' {
 			return false
+		}
+		if char == '.' {
+			dot = true
 		}
 	}
 	return true
@@ -46,12 +56,11 @@ func IsDecimalFloatingPoint(value string) bool {
 //from the set [0..9], '-', and '.' that expresses a signed
 //floating-point number in decimal positional notation.
 func IsSignedDecimalFloatingPoint(value string) bool {
-	for _, char := range value {
-		if (char < '0' || char > '9') && char != '.' && char != '-' {
-			return false
-		}
+	value = strings.TrimLeft(value, "-")
+	if value == "" {
+		return false
 	}
-	return true
+	return IsDecimalFloatingPoint(value)
 }
 
 //The following characters MUST NOT appear in a
@@ -87,6 +96,9 @@ func IsQuotedString(value string) bool {
 //explicitly defined by the AttributeName.  An enumerated-string
 //will never contain double quotes ("), commas (,), or whitespace.
 func EnumeratedString(value string) bool {
+	if value == "" {
+		return false
+	}
 	for _, char := range value {
 		if char == ',' || char == ' ' || char == '"' {
 			return false
@@ -104,7 +116,7 @@ func IsDecimalResolution(value string) bool {
 		return false
 	}
 
-	values := strings.SplitN(value, "x", 1)
+	values := strings.Split(value, "x")
 	if len(values) != 2 {
 		return false
 	}
