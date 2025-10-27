@@ -197,19 +197,52 @@ func TestIsString(t *testing.T) {
 	//\r\n
 	//\n
 	//"
+	//`""`
+
 	//""
 	//" "
-	//`""`
 	//Hello world
 }
 
 func TestQuotedString(t *testing.T) {
-	//""
-	//" "
-	//`""`
-	//`"Hello world"`
-	//`"Hello world`
-	//`hello world"`
+	type testcase struct {
+		value  string
+		output bool
+	}
+
+	testcases := []testcase{
+		{
+			value:  "",
+			output: false,
+		},
+		{
+			value:  " ",
+			output: false,
+		},
+		{
+			value:  `"Hello world`,
+			output: false,
+		},
+		{
+			value:  `Hello world"`,
+			output: false,
+		},
+		{
+			value:  `""`,
+			output: true,
+		},
+		{
+			value:  `"Hello world"`,
+			output: true,
+		},
+	}
+
+	for _, testcase := range testcases {
+		output := HLS.IsQuotedString(testcase.value)
+		if output != testcase.output {
+			t.Fatal("Expected", testcase.output, "but got", output)
+		}
+	}
 }
 
 func TestIsEnumeratedString(t *testing.T) {
