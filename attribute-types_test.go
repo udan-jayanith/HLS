@@ -51,10 +51,11 @@ func TestIsDecimalInteger(t *testing.T) {
 func TestIsHexadecimalSequence(t *testing.T) {
 	//""
 	//" "
-	//ABC123
 	//ABC-123
 	//abc123
+	//ABC123
 	//123ABC
+	//1ABC23
 }
 
 func TestDecimalFloatingPoint(t *testing.T) {

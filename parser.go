@@ -36,55 +36,55 @@ func ParseHLSTag(line string) (HLSTag, error) {
 	return hlsTag, nil
 }
 
-func ParseCSV(csv string) []string {
-	valueList := make([]string, 0)
+var (
+	InvalidCSV error = errors.New("Invalid CSV")
+)
 
-	n := 0
-	for n < len(csv) {
-		token, readBytes := getCSV_Token(csv, n)
-		n += readBytes
-		valueList = append(valueList, token)
+func ParseCSV(csv string) ([]string, error) {
+	tokens := make([]string, 0, 1)
+
+	if len(csv) < 1 {
+		return tokens, InvalidCSV
+	} else if csv[len(csv)-1] != ',' {
+		csv += string(',')
 	}
-	return valueList
-}
-
-// getCSV_Token scans csv from readPosition and returns CSV and bytes read.
-func getCSV_Token(csv string, readPosition int) (string, int) {
-	if readPosition >= len(csv) || csv[readPosition] == ',' {
-		return "", 1
-	}
-
 	var quote bool
-	enp := readPosition //End position
-	for enp < len(csv) {
-		if csv[enp] == '"' {
+	var comma int
+	for i, char := range csv {
+		if char == '"' {
 			quote = !quote
-		} else if csv[enp] == ',' && !quote {
-			break
+		} else if !quote && char == ' ' {
+			return tokens, InvalidCSV
+		} else if !quote && char == ',' {
+			token := strings.TrimSpace(csv[comma:i])
+			comma = i + 1
+			if len(token) < 1 {
+				return tokens, InvalidCSV
+			} else if token[0] == '"' && len(token)-1 != 0 && token[len(token)-1] == '"' {
+				token = strings.Trim(token, `"`)
+			}
+			tokens = append(tokens, token)
 		}
-		enp++
+	}
+	if quote {
+		return tokens, InvalidCSV
 	}
 
-	n := enp - readPosition
-	if enp == len(csv) {
-		return csv[readPosition:], n
-	} else if n == 0 {
-		return "", n
-	}
-
-	return csv[readPosition:enp], n + 1
+	return tokens, nil
 }
 
 var (
-	InvalidAttributeValuePair error = errors.New("Invalid attribute value pair")
-	ContainsInvalidSpaces     error = errors.New("Contains invalid spaces")
+	InvalidAttributeList error = errors.New("Invalid attribute list")
 )
 
 // ParseAttributeList parses the attribute list and returns a map as attribute/value pair and a error.
 // quoted-strings double quotes get removed.
 func ParseAttributeList(attributeList string) (map[string]string, error) {
-	csvs := ParseCSV(attributeList)
+	csvs, err := ParseCSV(attributeList)
 	attributeValuePairs := make(map[string]string, len(csvs))
+	if err != nil {
+		return attributeValuePairs, InvalidAttributeList
+	}
 
 	for _, csv := range csvs {
 		rp := 0
@@ -94,9 +94,9 @@ func ParseAttributeList(attributeList string) (map[string]string, error) {
 
 		//Returns a error if '=' sign is the last character of the csv or if csv[rp] is the last character or if csv[rp] sign is the first character.
 		if rp >= len(csv)-1 || rp == 0 {
-			return attributeValuePairs, InvalidAttributeValuePair
+			return attributeValuePairs, InvalidAttributeList
 		} else if csv[rp-1] == ' ' || csv[rp+1] == ' ' {
-			return attributeValuePairs, ContainsInvalidSpaces
+			return attributeValuePairs, InvalidAttributeList
 		}
 		attributeValuePairs[csv[:rp]] = strings.Trim(csv[rp+1:], `"`)
 	}

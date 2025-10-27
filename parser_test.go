@@ -80,8 +80,12 @@ func TestParseCSV(t *testing.T) {
 			"RESOLUTION=3840x2160",
 		}
 		csv := strings.Join(list, ",")
-		values := HLS.ParseCSV(csv)
-		if slices.Compare(list, values) != 0 {
+		values, err := HLS.ParseCSV(csv)
+		if err != nil {
+			t.Log(values)
+			t.Fatal(err)
+		}
+		if slices.Compare(values, list) != 0 {
 			t.Fatal("Expected", list, "but got", values)
 		}
 	}
@@ -90,37 +94,51 @@ func TestParseCSV(t *testing.T) {
 		list := []string{
 			"PROGRAM-ID=1",
 			"BANDWIDTH=10768000",
-			`CODECS="avc1.640028,mp4a.40.2"`,
+			`CODECS="avc1.640028,mp4a.40.2",`,
 			"RESOLUTION=3840x2160",
 		}
-		csv := strings.Join(list, ",") + ","
-		values := HLS.ParseCSV(csv)
-		if slices.Compare(list, values) != 0 {
+		csv := strings.Join(list, ",")
+		if _, err := HLS.ParseCSV(csv); err == nil {
+			t.Fatal("Expected a error but got no error")
+		}
+	}
+
+	{
+		values, err := HLS.ParseCSV(`
+			Enumerated-String,1240x720,"Quoted String"
+		`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		list := []string{
+			"Enumerated-String",
+			"1240x720",
+			`Quoted String`,
+		}
+		if slices.Compare(values, list) != 0 {
 			t.Fatal("Expected", list, "but got", values)
 		}
 	}
 
 	{
-		values := HLS.ParseCSV(", ")
-		if slices.Compare(values, []string{
-			"",
-			" ",
-		}) != 0 {
-			t.Fatal("Expected two empty strings but got", values)
+		if _, err := HLS.ParseCSV(", "); err == nil {
+			t.Fatal("Expected a error but got no error")
+		}
+
+	}
+
+	{
+		if _, err := HLS.ParseCSV(" ,"); err == nil {
+			t.Fatal("Expected a error but got no error")
 		}
 	}
 
 	{
-		values := HLS.ParseCSV(" ,")
-		if slices.Compare(values, []string{
-			" ",
-		}) != 0 {
-			t.Fatal("Expected ` ,` but got", values)
+		values, err := HLS.ParseCSV("value,")
+		if err != nil {
+			t.Log("Unexpected error")
+			t.Fatal(err)
 		}
-	}
-
-	{
-		values := HLS.ParseCSV("value,")
 		list := []string{
 			"value",
 		}
@@ -130,38 +148,31 @@ func TestParseCSV(t *testing.T) {
 	}
 
 	{
-		values := HLS.ParseCSV(",")
-		list := []string{
-			"",
-		}
-		if slices.Compare(values, list) != 0 {
-			t.Fatal("Expected", list, "but got", values)
+		if _, err := HLS.ParseCSV(","); err == nil {
+			t.Fatal("Expected a error but got no error")
 		}
 	}
 
 	{
-		values := HLS.ParseCSV("")
-		list := []string{}
-		if slices.Compare(values, list) != 0 {
-			t.Fatal("Expected", list, "but got", values)
+		if _, err := HLS.ParseCSV(""); err == nil {
+			t.Fatal("Expected a error but got no error")
 		}
+
 	}
 }
 
 func TestParseAttributeList(t *testing.T) {
 	{
-		attributes, err := HLS.ParseAttributeList("")
-		if err != nil {
-			t.Log("Error ParseAttributeList")
+		_, err := HLS.ParseAttributeList("")
+		if err == nil {
+			t.Log("Expected a error but got no.")
 			t.Fatal(err)
-		} else if len(attributes) != 0 {
-			t.Fatal("Expected attributes to be empty but not.")
 		}
 	}
 
 	{
 		_, err := HLS.ParseAttributeList("= ")
-		if err != HLS.InvalidAttributeValuePair {
+		if err != HLS.InvalidAttributeList {
 			t.Log("Error ParseAttributeList")
 			t.Fatal(err)
 		}
@@ -169,7 +180,7 @@ func TestParseAttributeList(t *testing.T) {
 
 	{
 		_, err := HLS.ParseAttributeList(" =")
-		if err != HLS.InvalidAttributeValuePair {
+		if err != HLS.InvalidAttributeList {
 			t.Log("Error ParseAttributeList")
 			t.Fatal(err)
 		}
@@ -195,7 +206,7 @@ func TestParseAttributeList(t *testing.T) {
 
 	{
 		_, err := HLS.ParseAttributeList("attribute=")
-		if err != HLS.InvalidAttributeValuePair {
+		if err != HLS.InvalidAttributeList {
 			t.Log("Error ParseAttributeList")
 			t.Fatal(err)
 		}
@@ -203,7 +214,7 @@ func TestParseAttributeList(t *testing.T) {
 
 	{
 		_, err := HLS.ParseAttributeList("=value")
-		if err != HLS.InvalidAttributeValuePair {
+		if err != HLS.InvalidAttributeList {
 			t.Log("Error ParseAttributeList")
 			t.Fatal(err)
 		}
@@ -211,7 +222,7 @@ func TestParseAttributeList(t *testing.T) {
 
 	{
 		_, err := HLS.ParseAttributeList("attribute = value")
-		if err != HLS.ContainsInvalidSpaces {
+		if err != HLS.InvalidAttributeList {
 			t.Log("Error ParseAttributeList")
 			t.Fatal(err)
 		}
