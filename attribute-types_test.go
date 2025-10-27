@@ -49,21 +49,89 @@ func TestIsDecimalInteger(t *testing.T) {
 }
 
 func TestIsHexadecimalSequence(t *testing.T) {
-	//""
-	//" "
-	//ABC-123
-	//abc123
-	//ABC123
-	//123ABC
-	//1ABC23
+	{
+		if HLS.IsHexadecimalSequence("") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsHexadecimalSequence(" ") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsHexadecimalSequence("ABC-123") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsHexadecimalSequence("abc123") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if !HLS.IsHexadecimalSequence("ABC123") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsHexadecimalSequence("123ABC") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsHexadecimalSequence("1ABC23") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsHexadecimalSequence("ABC") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsHexadecimalSequence("123") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if HLS.IsHexadecimalSequence("1.23") {
+			t.Fatal("Expected to be false")
+		}
+	}
 }
 
 func TestDecimalFloatingPoint(t *testing.T) {
-	//""
-	//" "
-	//10
-	//0.1031
-	//14.42.52
+	{
+		if HLS.IsDecimalFloatingPoint("") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsDecimalFloatingPoint(" ") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsDecimalFloatingPoint("14.42.52") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsDecimalFloatingPoint("ABC") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if !HLS.IsDecimalFloatingPoint("10") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsDecimalFloatingPoint("0.1031") {
+			t.Fatal("Expected to be true")
+		}
+	}
 }
 
 func TestSignedDecimalFloatingPoint(t *testing.T) {
