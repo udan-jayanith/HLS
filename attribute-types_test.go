@@ -145,15 +145,52 @@ func TestDecimalFloatingPoint(t *testing.T) {
 }
 
 func TestSignedDecimalFloatingPoint(t *testing.T) {
-	//""
-	//" "
-	//12-41
-	//31.4
-	//42-.4
-	//-4.5
-	//4
-	//-4
-	//4-
+	{
+		if HLS.IsSignedDecimalFloatingPoint("") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsSignedDecimalFloatingPoint(" ") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsSignedDecimalFloatingPoint("12-41") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsSignedDecimalFloatingPoint("42-.4") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsSignedDecimalFloatingPoint("4-") {
+			t.Fatal("Expected to be false")
+		}
+	}
+
+	{
+		if !HLS.IsSignedDecimalFloatingPoint("-4.5") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsSignedDecimalFloatingPoint("4") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsSignedDecimalFloatingPoint("-4") {
+			t.Fatal("Expected to be true")
+		}
+	}
+	{
+		if !HLS.IsSignedDecimalFloatingPoint("31.4") {
+			t.Fatal("Expected to be true")
+		}
+	}
 }
 
 func TestIsString(t *testing.T) {
