@@ -88,9 +88,10 @@ func IsString(value string) bool {
 func IsQuotedString(value string) bool {
 	if len(value) < 2 {
 		return false
-	} else if value[0] != '"' || value[len(value)-1] != '"' {
+	} else if value[0] != '"' || value[len(value)-1] != '"' || len(value)-1 == 0 {
 		return false
 	}
+	//Make sure end and start of the value is quote and not end != start
 	return IsString(strings.Trim(value, `"`))
 }
 

@@ -194,14 +194,38 @@ func TestSignedDecimalFloatingPoint(t *testing.T) {
 }
 
 func TestIsString(t *testing.T) {
-	//\r\n
-	//\n
-	//"
-	//`""`
-
-	//""
-	//" "
-	//Hello world
+	testcases := []struct {
+		value  string
+		output bool
+	}{
+		{
+			value: "\r\n",
+		},
+		{
+			value: "\n",
+		},
+		{
+			value: `""`,
+		},
+		{
+			value:  "",
+			output: true,
+		}, {
+			value:  " ",
+			output: true,
+		},
+		{
+			value:  "Hello world",
+			output: true,
+		},
+	}
+	for _, testcase := range testcases {
+		output := HLS.IsString(testcase.value)
+		if output != testcase.output {
+			t.Log(testcase)
+			t.Fatal("Expected", testcase.output, "but got", output)
+		}
+	}
 }
 
 func TestQuotedString(t *testing.T) {
@@ -228,6 +252,9 @@ func TestQuotedString(t *testing.T) {
 			output: false,
 		},
 		{
+			value: `"`,
+		},
+		{
 			value:  `""`,
 			output: true,
 		},
@@ -249,9 +276,10 @@ func TestIsEnumeratedString(t *testing.T) {
 	//""
 	//" "
 	//Hello,
-	//Hello world
 	//Hello" world
 	//Hello world
+
+	//Hello-world
 }
 
 func TestIsDecimalResolution(t *testing.T) {
