@@ -123,6 +123,16 @@ func TestDecimalFloatingPoint(t *testing.T) {
 		}
 	}
 	{
+		if HLS.IsDecimalFloatingPoint(".10") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
+		if HLS.IsDecimalFloatingPoint("10.") {
+			t.Fatal("Expected to be false")
+		}
+	}
+	{
 		if !HLS.IsDecimalFloatingPoint("10") {
 			t.Fatal("Expected to be true")
 		}

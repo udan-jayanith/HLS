@@ -39,6 +39,8 @@ func IsHexadecimalSequence(value string) bool {
 func IsDecimalFloatingPoint(value string) bool {
 	if value == "" {
 		return false
+	} else if value[0] == '.' || value[len(value)-1] == '.' {
+		return false
 	}
 	var dot bool
 	for _, char := range value {
