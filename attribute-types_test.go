@@ -320,15 +320,85 @@ func TestIsDecimalResolution(t *testing.T) {
 	//" "
 	//1024x
 	//x720
-	//1024x720
 	//1024
-	//0x0
 	//1024x260x720
 	//1024x720abc
+
+	//1024x720
+	//0x0
+	type testcase struct {
+		value  string
+		output bool
+	}
+
+	testcases := []testcase{
+		{
+			value: "",
+		},
+		{
+			value: " ",
+		},
+		{
+			value: `1024x`,
+		},
+		{
+			value: `x720`,
+		},
+		{
+			value: `1024`,
+		},
+		{
+			value: `1024x260x720`,
+		},
+		{
+			value: "1024x720abc",
+		},
+		{
+			value:  "1024x720",
+			output: true,
+		},
+		{
+			value:  "0x0",
+			output: true,
+		},
+	}
+
+	for _, testcase := range testcases {
+		output := HLS.IsDecimalResolution(testcase.value)
+		if output != testcase.output {
+			t.Log("input", testcase.value)
+			t.Fatal("Expected", testcase.output, "but got", output)
+		}
+	}
 }
 
 func TestWrapQuotes(t *testing.T) {
 	//""
 	//" "
 	//"Hello world"
+	testcases := []struct {
+		value  string
+		output string
+	}{
+		{
+			value: "",
+			output: `""`,
+		},
+		{
+			value: " ",
+			output: `" "`,
+		},
+		{
+			value: `Hello world`,
+			output: `"Hello world"`,
+		},
+	}
+	for _, testcase := range testcases {
+		output := HLS.WrapQuotes(testcase.value)
+		if output != testcase.output {
+			t.Log(testcase)
+			t.Fatal("Expected", testcase.output, "but got", output)
+		}
+	}
+
 }
