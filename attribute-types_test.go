@@ -278,8 +278,41 @@ func TestIsEnumeratedString(t *testing.T) {
 	//Hello,
 	//Hello" world
 	//Hello world
+	type testcase struct {
+		value  string
+		output bool
+	}
 
-	//Hello-world
+	testcases := []testcase{
+		{
+			value: "",
+		},
+		{
+			value: " ",
+		},
+		{
+			value: `Hello,`,
+		},
+		{
+			value: `"Hello-world"`,
+		},
+		{
+			value: `Hello world`,
+		},
+		{
+			value:  `Hello-world`,
+			output: true,
+		},
+	}
+
+	for _, testcase := range testcases {
+		output := HLS.IsEnumeratedString(testcase.value)
+		if output != testcase.output {
+			t.Log("input", testcase.value)
+			t.Fatal("Expected", testcase.output, "but got", output)
+		}
+	}
+
 }
 
 func TestIsDecimalResolution(t *testing.T) {

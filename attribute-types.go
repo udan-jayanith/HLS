@@ -98,7 +98,7 @@ func IsQuotedString(value string) bool {
 //enumerated-string: an unquoted character string from a set that is
 //explicitly defined by the AttributeName.  An enumerated-string
 //will never contain double quotes ("), commas (,), or whitespace.
-func EnumeratedString(value string) bool {
+func IsEnumeratedString(value string) bool {
 	if value == "" {
 		return false
 	}
