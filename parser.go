@@ -118,30 +118,30 @@ var (
 // ParseResolution parses decimalResolution and returns Resolution
 func ParseResolution(decimalResolution string) (Resolution, error) {
 	//1024x720
-	if len(decimalResolution) == 0 || decimalResolution[0] == 'x' || decimalResolution[len(decimalResolution)-1] == 'x' {
-		return Resolution{}, InvalidDecimalResolution
+	resolution := Resolution{}
+	if !IsDecimalResolution(decimalResolution) {
+		return resolution, InvalidDecimalResolution
 	}
 
-	xPosition := 0
-	for xPosition < len(decimalResolution) && decimalResolution[xPosition] != 'x' {
-		xPosition++
+	var i int
+	for i < len(decimalResolution) && decimalResolution[i] != 'x' {
+		i++
 	}
-	if xPosition >= len(decimalResolution)-1 {
-		return Resolution{}, InvalidDecimalResolution
+	if i+1 >= len(decimalResolution) || i == 0 {
+		return resolution, InvalidDecimalResolution
 	}
 
-	width, err := strconv.Atoi(decimalResolution[:xPosition])
+	width, err := strconv.Atoi(decimalResolution[:i])
 	if err != nil {
-		return Resolution{}, err
+		return resolution, InvalidDecimalResolution
 	}
 
-	height, err := strconv.Atoi(decimalResolution[xPosition+1:])
+	height, err := strconv.Atoi(decimalResolution[i+1:])
 	if err != nil {
-		return Resolution{}, err
+		return resolution, InvalidDecimalResolution
 	}
 
-	return Resolution{
-		Width:  width,
-		Height: height,
-	}, nil
+	resolution.Width = width
+	resolution.Height = height
+	return resolution, nil
 }
