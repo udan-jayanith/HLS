@@ -13,7 +13,7 @@ const (
 	URI
 	RelativeURI
 	Comment //#
-	blank
+	Blank
 )
 
 func (t LineType) String() string {
@@ -26,8 +26,8 @@ func (t LineType) String() string {
 		return "Relative URI"
 	case Comment:
 		return "Comment"
-	case blank:
-		return "blank"
+	case Blank:
+		return "Blank"
 	}
 	return "Unknown LineType"
 }
@@ -59,7 +59,7 @@ func getLineType(line string) LineType {
 	} else if isComment(line) {
 		return Comment
 	}
-	return blank
+	return Blank
 }
 
 type PlayListTokenizer struct {
@@ -101,15 +101,15 @@ func (plt *PlayListTokenizer) Advance() (PlaylistToken, error) {
 		token.Type = getLineType(line)
 
 		if token.Type == Comment || token.Type == Tag {
-			token.Value = strings.TrimLeft(line, "#")
+			token.Value = strings.TrimPrefix(line, "#")
 		} else {
 			token.Value = line
 		}
 		if token.Type == Tag {
-			token.Value = strings.TrimRight(token.Value, ",")
+			token.Value = strings.TrimSuffix(token.Value, ",")
 		}
 
-		if token.Type != blank {
+		if token.Type != Blank {
 			return token, nil
 		}
 	}
