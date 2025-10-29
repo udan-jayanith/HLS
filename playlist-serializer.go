@@ -6,5 +6,6 @@ package HLS
 //Add AddLineTo.
 /*
 Implement:
-	NewPlaylistToken() PlaylistToken
+	NewPlaylistToken(lineType LineType, value string) PlaylistToken
+	func (pt *PlaylistToken) String() string
 */
