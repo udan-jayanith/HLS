@@ -59,8 +59,6 @@ func ParseCSV(csv string) ([]string, error) {
 			comma = i + 1
 			if len(token) < 1 {
 				return tokens, InvalidCSV
-			} else if token[0] == '"' && len(token)-1 != 0 && token[len(token)-1] == '"' {
-				token = strings.Trim(token, `"`)
 			}
 			tokens = append(tokens, token)
 		}
@@ -77,7 +75,6 @@ var (
 )
 
 // ParseAttributeList parses the attribute list and returns a map as attribute/value pair and a error.
-// quoted-strings double quotes get removed.
 func ParseAttributeList(attributeList string) (map[string]string, error) {
 	csvs, err := ParseCSV(attributeList)
 	attributeValuePairs := make(map[string]string, len(csvs))
@@ -97,7 +94,7 @@ func ParseAttributeList(attributeList string) (map[string]string, error) {
 		} else if csv[rp-1] == ' ' || csv[rp+1] == ' ' {
 			return attributeValuePairs, InvalidAttributeList
 		}
-		attributeValuePairs[csv[:rp]] = strings.Trim(csv[rp+1:], `"`)
+		attributeValuePairs[csv[:rp]] = csv[rp+1:]
 	}
 	return attributeValuePairs, nil
 }
