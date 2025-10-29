@@ -2,6 +2,7 @@ package HLS
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -137,6 +138,10 @@ func IsDecimalResolution(value string) bool {
 
 type Resolution struct {
 	Width, Height int
+}
+
+func (resolution *Resolution) ToDecimalResolution() string {
+	return fmt.Sprintf(`%vx%v`, resolution.Width, resolution.Height)
 }
 
 var (

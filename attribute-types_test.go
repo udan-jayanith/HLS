@@ -452,3 +452,24 @@ func TestParseDecimalResolution(t *testing.T) {
 		}
 	}
 }
+
+func TestToDecimalResolution(t *testing.T) {
+	{
+		resolution := HLS.Resolution{}
+		output := resolution.ToDecimalResolution()
+		if output != "0x0" {
+			t.Fatal("Expected 0x0 but got", output)
+		}
+	}
+
+	{
+		resolution := HLS.Resolution{
+			Width:  1024,
+			Height: 720,
+		}
+		output := resolution.ToDecimalResolution()
+		if output != "1024x720" {
+			t.Fatal("Expected 1024x720 but got", output)
+		}
+	}
+}
