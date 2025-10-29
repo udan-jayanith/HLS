@@ -2,7 +2,6 @@ package HLS
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 )
 
@@ -101,47 +100,4 @@ func ParseAttributeList(attributeList string) (map[string]string, error) {
 		attributeValuePairs[csv[:rp]] = strings.Trim(csv[rp+1:], `"`)
 	}
 	return attributeValuePairs, nil
-}
-
-type Resolution struct {
-	Width, Height int
-}
-
-var (
-	InvalidDecimalResolution error = errors.New("Invalid decimal resolution")
-)
-
-// decimalResolution: two decimal-integers separated by the "x"
-// character.  The first integer is a horizontal pixel dimension
-// (width); the second is a vertical pixel dimension (height).
-//
-// ParseResolution parses decimalResolution and returns Resolution
-func ParseResolution(decimalResolution string) (Resolution, error) {
-	//1024x720
-	resolution := Resolution{}
-	if !IsDecimalResolution(decimalResolution) {
-		return resolution, InvalidDecimalResolution
-	}
-
-	var i int
-	for i < len(decimalResolution) && decimalResolution[i] != 'x' {
-		i++
-	}
-	if i+1 >= len(decimalResolution) || i == 0 {
-		return resolution, InvalidDecimalResolution
-	}
-
-	width, err := strconv.Atoi(decimalResolution[:i])
-	if err != nil {
-		return resolution, InvalidDecimalResolution
-	}
-
-	height, err := strconv.Atoi(decimalResolution[i+1:])
-	if err != nil {
-		return resolution, InvalidDecimalResolution
-	}
-
-	resolution.Width = width
-	resolution.Height = height
-	return resolution, nil
 }

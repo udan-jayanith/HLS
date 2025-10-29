@@ -1,11 +1,15 @@
 package HLS
 
-import "strings"
+import (
+	"errors"
+	"strconv"
+	"strings"
+)
 
-//decimal-integer: an unquoted string of characters from the set
-//[0..9] expressing an integer in base-10 arithmetic in the range
-//from 0 to 2^64-1 (18446744073709551615).  A decimal-integer may be
-//from 1 to 20 characters long.
+// decimal-integer: an unquoted string of characters from the set
+// [0..9] expressing an integer in base-10 arithmetic in the range
+// from 0 to 2^64-1 (18446744073709551615).  A decimal-integer may be
+// from 1 to 20 characters long.
 func IsDecimalInteger(value string) bool {
 	if len(value) < 1 || len(value) > 20 {
 		return false
@@ -18,9 +22,9 @@ func IsDecimalInteger(value string) bool {
 	return true
 }
 
-//hexadecimal-sequence: an unquoted string of characters from the
-//set [0..9] and [A..F].  The maximum
-//length of a hexadecimal-sequence depends on its AttributeNames.
+// hexadecimal-sequence: an unquoted string of characters from the
+// set [0..9] and [A..F].  The maximum
+// length of a hexadecimal-sequence depends on its AttributeNames.
 func IsHexadecimalSequence(value string) bool {
 	if value == "" {
 		return false
@@ -33,9 +37,9 @@ func IsHexadecimalSequence(value string) bool {
 	return true
 }
 
-//decimal-floating-point: an unquoted string of characters from the
-//set [0..9] and '.' that expresses a non-negative floating-point
-//number in decimal positional notation.
+// decimal-floating-point: an unquoted string of characters from the
+// set [0..9] and '.' that expresses a non-negative floating-point
+// number in decimal positional notation.
 func IsDecimalFloatingPoint(value string) bool {
 	if value == "" {
 		return false
@@ -54,9 +58,9 @@ func IsDecimalFloatingPoint(value string) bool {
 	return true
 }
 
-//signed-decimal-floating-point: an unquoted string of characters
-//from the set [0..9], '-', and '.' that expresses a signed
-//floating-point number in decimal positional notation.
+// signed-decimal-floating-point: an unquoted string of characters
+// from the set [0..9], '-', and '.' that expresses a signed
+// floating-point number in decimal positional notation.
 func IsSignedDecimalFloatingPoint(value string) bool {
 	value = strings.TrimLeft(value, "-")
 	if value == "" {
@@ -65,9 +69,9 @@ func IsSignedDecimalFloatingPoint(value string) bool {
 	return IsDecimalFloatingPoint(value)
 }
 
-//The following characters MUST NOT appear in a
-//string: line feed (0xA), carriage return (0xD), or double
-//quote (0x22).
+// The following characters MUST NOT appear in a
+// string: line feed (0xA), carriage return (0xD), or double
+// quote (0x22).
 func IsString(value string) bool {
 	//\n, \r, "
 	for _, char := range value {
@@ -78,13 +82,13 @@ func IsString(value string) bool {
 	return true
 }
 
-//quoted-string: a string of characters within a pair of double
-//quotes (0x22).  The following characters MUST NOT appear in a
-//quoted-string: line feed (0xA), carriage return (0xD), or double
-//quote (0x22).  Quoted-string AttributeValues SHOULD be constructed
-//so that byte-wise comparison is sufficient to test two quoted-
-//string AttributeValues for equality.  Note that this implies case-
-//sensitive comparison.
+// quoted-string: a string of characters within a pair of double
+// quotes (0x22).  The following characters MUST NOT appear in a
+// quoted-string: line feed (0xA), carriage return (0xD), or double
+// quote (0x22).  Quoted-string AttributeValues SHOULD be constructed
+// so that byte-wise comparison is sufficient to test two quoted-
+// string AttributeValues for equality.  Note that this implies case-
+// sensitive comparison.
 func IsQuotedString(value string) bool {
 	if len(value) < 2 {
 		return false
@@ -95,9 +99,13 @@ func IsQuotedString(value string) bool {
 	return IsString(strings.Trim(value, `"`))
 }
 
-//enumerated-string: an unquoted character string from a set that is
-//explicitly defined by the AttributeName.  An enumerated-string
-//will never contain double quotes ("), commas (,), or whitespace.
+func WrapQuotes(value string) string {
+	return `"` + value + `"`
+}
+
+// enumerated-string: an unquoted character string from a set that is
+// explicitly defined by the AttributeName.  An enumerated-string
+// will never contain double quotes ("), commas (,), or whitespace.
 func IsEnumeratedString(value string) bool {
 	if value == "" {
 		return false
@@ -110,9 +118,9 @@ func IsEnumeratedString(value string) bool {
 	return true
 }
 
-//decimal-resolution: two decimal-integers separated by the "x"
-//character.  The first integer is a horizontal pixel dimension
-//(width); the second is a vertical pixel dimension (height).
+// decimal-resolution: two decimal-integers separated by the "x"
+// character.  The first integer is a horizontal pixel dimension
+// (width); the second is a vertical pixel dimension (height).
 func IsDecimalResolution(value string) bool {
 	value = strings.TrimSpace(value)
 	if value == "" {
@@ -127,6 +135,45 @@ func IsDecimalResolution(value string) bool {
 	return IsDecimalInteger(values[0]) && IsDecimalInteger(values[1])
 }
 
-func WrapQuotes(value string) string {
-	return `"` + value + `"`
+type Resolution struct {
+	Width, Height int
+}
+
+var (
+	InvalidDecimalResolution error = errors.New("Invalid decimal resolution")
+)
+
+// decimalResolution: two decimal-integers separated by the "x"
+// character.  The first integer is a horizontal pixel dimension
+// (width); the second is a vertical pixel dimension (height).
+//
+// ParseResolution parses decimalResolution and returns Resolution
+func ParseResolution(decimalResolution string) (Resolution, error) {
+	//1024x720
+	resolution := Resolution{}
+	if !IsDecimalResolution(decimalResolution) {
+		return resolution, InvalidDecimalResolution
+	}
+
+	var i int
+	for i < len(decimalResolution) && decimalResolution[i] != 'x' {
+		i++
+	}
+	if i+1 >= len(decimalResolution) || i == 0 {
+		return resolution, InvalidDecimalResolution
+	}
+
+	width, err := strconv.Atoi(decimalResolution[:i])
+	if err != nil {
+		return resolution, InvalidDecimalResolution
+	}
+
+	height, err := strconv.Atoi(decimalResolution[i+1:])
+	if err != nil {
+		return resolution, InvalidDecimalResolution
+	}
+
+	resolution.Width = width
+	resolution.Height = height
+	return resolution, nil
 }
