@@ -113,7 +113,7 @@ func TestParseCSV(t *testing.T) {
 		list := []string{
 			"Enumerated-String",
 			"1240x720",
-			`Quoted String`,
+			`"Quoted String"`,
 		}
 		if slices.Compare(values, list) != 0 {
 			t.Fatal("Expected", list, "but got", values)
@@ -249,13 +249,13 @@ func TestParseAttributeList(t *testing.T) {
 		resMap := map[string]string{
 			"AVERAGE-BANDWIDTH": "183689",
 			"BANDWIDTH":         "187492",
-			"CODECS":            `avc1.64002a`,
+			"CODECS":            `"avc1.64002a"`,
 			"RESOLUTION":        "1920x1080",
-			"URI":               "v7/iframe_index.m3u8",
+			"URI":               `"v7/iframe_index.m3u8"`,
 		}
 
 		if !maps.Equal(attributes, resMap) {
-			t.Log("Unexpected attributes")
+			t.Log("Expected")
 			t.Log(resMap)
 			t.Log("but got")
 			t.Log(attributes)
