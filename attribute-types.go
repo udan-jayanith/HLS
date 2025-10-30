@@ -182,3 +182,5 @@ func ParseResolution(decimalResolution string) (Resolution, error) {
 	resolution.Height = height
 	return resolution, nil
 }
+
+func RemoveQuotes(quotedString string) string
