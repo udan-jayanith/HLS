@@ -34,6 +34,16 @@ func NewPlaylistToken(lineType LineType, value string) PlaylistToken {
 	}
 }
 
+/*
+type TagValue interface {
+	String() string
+}
+
+func NewPlaylistTag(tag PlaylistTag, value TagValue) PlaylistToken {
+
+}
+*/
+
 // Playlist represents a HLS content.
 type Playlist struct {
 	buf []byte

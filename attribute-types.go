@@ -183,4 +183,6 @@ func ParseResolution(decimalResolution string) (Resolution, error) {
 	return resolution, nil
 }
 
-func RemoveQuotes(quotedString string) string
+func RemoveQuotes(quotedString string) string{
+	return ""
+}

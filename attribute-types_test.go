@@ -473,3 +473,5 @@ func TestToDecimalResolution(t *testing.T) {
 		}
 	}
 }
+
+//TestRemoveQuotes

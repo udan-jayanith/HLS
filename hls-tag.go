@@ -39,6 +39,7 @@ var (
 	InvalidCSV error = errors.New("Invalid CSV")
 )
 
+// Returned []string value is in left to right as in csv string.
 func ParseCSV(csv string) ([]string, error) {
 	tokens := make([]string, 0, 1)
 
@@ -70,14 +71,28 @@ func ParseCSV(csv string) ([]string, error) {
 	return tokens, nil
 }
 
+type CSV_Builder struct {
+	builder strings.Builder
+}
+
+func (cb *CSV_Builder) Append(value ...string) {
+
+}
+
+func (cb *CSV_Builder) String() string {
+	return ""
+}
+
 var (
 	InvalidAttributeList error = errors.New("Invalid attribute list")
 )
 
+type AttributeList map[string]string
+
 // ParseAttributeList parses the attribute list and returns a map as attribute/value pair and a error.
-func ParseAttributeList(attributeList string) (map[string]string, error) {
+func ParseAttributeList(attributeList string) (AttributeList, error) {
 	csvs, err := ParseCSV(attributeList)
-	attributeValuePairs := make(map[string]string, len(csvs))
+	attributeValuePairs := make(AttributeList, len(csvs))
 	if err != nil {
 		return attributeValuePairs, InvalidAttributeList
 	}
@@ -97,4 +112,8 @@ func ParseAttributeList(attributeList string) (map[string]string, error) {
 		attributeValuePairs[csv[:rp]] = csv[rp+1:]
 	}
 	return attributeValuePairs, nil
+}
+
+func (al *AttributeList) String() string{
+	return ""
 }
