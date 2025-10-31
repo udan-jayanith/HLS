@@ -1,7 +1,7 @@
 package HLS_test
 
 import (
-	"HLS"
+	"github.com/udan-jayanith/HLS"
 	"testing"
 )
 
