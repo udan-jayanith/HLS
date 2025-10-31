@@ -9,6 +9,7 @@ var (
 	InvalidAttributeList error = errors.New("Invalid attribute list")
 )
 
+// AttributeList is a map[string]string where key is the attribute name and the value is the attribute value.
 type AttributeList map[string]string
 
 // ParseAttributeList parses the attribute list and returns a map as attribute/value pair and a error.
@@ -36,6 +37,7 @@ func ParseAttributeList(attributeList string) (AttributeList, error) {
 	return attributeValuePairs, nil
 }
 
+// String returns al as a comma separated attribute/value pair.
 func (al AttributeList) String() string {
 	res := ""
 	count := 1

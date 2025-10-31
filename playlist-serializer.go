@@ -36,13 +36,14 @@ func NewPlaylistToken(lineType LineType, value string) PlaylistToken {
 	}
 }
 
-// Playlist represents a HLS content.
+// Playlist is used for building HTTP Live streaming playlist using PlaylistTokens.
 type Playlist struct {
 	buf []byte
 	err error
 }
 
 // NewPlaylist returns a new Playlist.
+// Playlist must be closed after writing data to it.
 func NewPlaylist() Playlist {
 	return Playlist{
 		buf: make([]byte, 0),
@@ -58,6 +59,7 @@ func (p *Playlist) AppendLine(playlistToken PlaylistToken) error {
 	return p.err
 }
 
+// AppendTag converts tag into a PlaylistToken and pass it into p.AppendLine and returns the error returned by it.
 func (p *Playlist) AppendTag(tag HLSTag) error {
 	return p.AppendLine(tag.ToPlaylistToken())
 }

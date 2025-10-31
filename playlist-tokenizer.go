@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// LineType are hls line types(blank, comment, tag, URI)
 type LineType int
 
 const (
@@ -16,6 +17,9 @@ const (
 	Blank
 )
 
+// String method of the LineType returns the string name of the line type.
+//
+//	Tag.String() == "Tag"
 func (t LineType) String() string {
 	switch t {
 	case Tag:
@@ -62,18 +66,29 @@ func getLineType(line string) LineType {
 	return Blank
 }
 
+// PlayListTokenizer is for tokenizing the HTTP Live stream.
 type PlayListTokenizer struct {
 	rd       *bufio.Reader
 	eofError error
 }
 
-// NewPlayListTokenizer returns a new PlayListTokenizer
+// NewPlayListTokenizer returns a new PlayListTokenizer.
 func NewPlayListTokenizer(r io.Reader) PlayListTokenizer {
 	return PlayListTokenizer{
 		rd: bufio.NewReader(r),
 	}
 }
 
+// PlaylistToken Type is the LineType of the Value.
+// Value is the whole line.
+// Examples of Value
+//
+//	EXTM3U
+//	\n
+//	This is a comment
+//	EXT-X-STREAM-INF:BANDWIDTH=7680000,CODECS="...",AUDIO="aac"
+//
+// If the value begins with a '#' symbol it gets removed like for comments and tags type.
 type PlaylistToken struct {
 	Type  LineType
 	Value string

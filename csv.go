@@ -11,6 +11,7 @@ var (
 
 type csvs []string
 
+// ParseCSV parses the csv as comma separated values.
 // Returned []string value is in left to right as in csv string.
 func ParseCSV(csv string) (csvs, error) {
 	tokens := make(csvs, 0, 1)

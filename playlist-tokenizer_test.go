@@ -169,7 +169,7 @@ func ExamplePlayListTokenizer() {
 		// Examples:
 		// EXTINF:3.003
 		// \n
-		//	#This is a comment
+		// This is a comment
 		fmt.Println(token.Value)
 	}
 }

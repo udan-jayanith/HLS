@@ -100,6 +100,7 @@ func IsQuotedString(value string) bool {
 	return IsString(strings.Trim(value, `"`))
 }
 
+// WrapQuotes add double quotes around the value and return it.
 func WrapQuotes(value string) string {
 	return `"` + value + `"`
 }
@@ -136,10 +137,12 @@ func IsDecimalResolution(value string) bool {
 	return IsDecimalInteger(values[0]) && IsDecimalInteger(values[1])
 }
 
+// Resolution is used for representing a resolution.
 type Resolution struct {
 	Width, Height int
 }
 
+// ToDecimalResolution returns the Width and Height of the resolution in order separated by 'x'.
 func (resolution *Resolution) ToDecimalResolution() string {
 	return fmt.Sprintf(`%vx%v`, resolution.Width, resolution.Height)
 }
