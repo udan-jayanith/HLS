@@ -2,7 +2,9 @@ package HLS_test
 
 import (
 	"HLS"
+	"fmt"
 	"io"
+	"log"
 	"os"
 	"testing"
 )
@@ -136,5 +138,38 @@ func testPlaylistTokenizerToken(token HLS.PlaylistToken, t *testing.T, ExpectedL
 		t.Log(ExpectedValue)
 		t.Log("gut got")
 		t.Fatal(token.Value)
+	}
+}
+
+func ExamplePlayListTokenizer() {
+	//Open a hls file.
+	file, err := os.Open("./playlist-examples/simple-media-playlist.m3u8")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	//PlayListTokenizer needs a reader to tokenize from.
+	playlistTokenizer := HLS.NewPlayListTokenizer(file)
+	for {
+		token, err := playlistTokenizer.Advance()
+		if err != nil {
+			break
+		}
+
+		// Token types are
+		// - Tag
+		// - URI
+		// - RelativeURI
+		// - Comment
+		// - Blank
+		fmt.Println(token.Type)
+
+		// token.Value is the literal value.
+		// Examples:
+		// EXTINF:3.003
+		// \n
+		//	#This is a comment
+		fmt.Println(token.Value)
 	}
 }
