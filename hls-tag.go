@@ -2,11 +2,12 @@ package HLS
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
 type HLSTag struct {
-	TagName string
+	TagName PlaylistTag
 	Value   string
 }
 
@@ -33,4 +34,11 @@ func ParseHLSTag(line string) (HLSTag, error) {
 	hlsTag.Value = line[rp+1:]
 
 	return hlsTag, nil
+}
+
+func (ht *HLSTag) ToPlaylistToken() PlaylistToken {
+	return PlaylistToken{
+		Type:  Tag,
+		Value: fmt.Sprintf("%s:%s", ht.TagName, ht.Value),
+	}
 }

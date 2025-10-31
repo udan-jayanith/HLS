@@ -36,16 +36,6 @@ func NewPlaylistToken(lineType LineType, value string) PlaylistToken {
 	}
 }
 
-/*
-type TagValue interface {
-	String() string
-}
-
-func NewPlaylistTag(tagName PlaylistTag, value TagValue) PlaylistToken {
-
-}
-*/
-
 // Playlist represents a HLS content.
 type Playlist struct {
 	buf []byte
@@ -66,6 +56,10 @@ func (p *Playlist) AppendLine(playlistToken PlaylistToken) error {
 	}
 	p.buf = append(p.buf, playlistToken.SerializeAsBytes()...)
 	return p.err
+}
+
+func (p *Playlist) AppendTag(tag HLSTag) error {
+	return p.AppendLine(tag.ToPlaylistToken())
 }
 
 // Close closes the “pl *Playlist“ for AppendLine and reading.

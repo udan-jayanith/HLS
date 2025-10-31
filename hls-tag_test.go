@@ -67,3 +67,16 @@ func TestParseHLSTag(t *testing.T) {
 	}
 }
 
+func TestToPlaylistToken(t *testing.T) {
+	hlsTag := HLS.HLSTag{
+		TagName: HLS.EXTINF,
+		Value:   `21.3,"title"`,
+	}
+
+	playlistToken := hlsTag.ToPlaylistToken()
+	if playlistToken.Type != HLS.Tag {
+		t.Fatal("Expected", HLS.Tag.String(), "but got", playlistToken.Type.String())
+	} else if playlistToken.Serialize() != `#EXTINF:21.3,"title"`+"\n" {
+		t.Fatal("Expected", `#EXTINF:21.3,"title"`, "but got", playlistToken.Serialize())
+	}
+}
