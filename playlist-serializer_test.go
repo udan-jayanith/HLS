@@ -94,12 +94,3 @@ func TestPlaylist(t *testing.T) {
 	}
 
 }
-
-func TestPlaylistTokenAppendTag(t *testing.T) {
-	/*
-	hlsTag := HLS.HLSTag{
-		TagName: HLS.EXTINF,
-		Value:   `21.3,"title"`,
-	}
-	*/
-}
