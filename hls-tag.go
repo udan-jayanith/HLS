@@ -36,54 +36,6 @@ func ParseHLSTag(line string) (HLSTag, error) {
 }
 
 var (
-	InvalidCSV error = errors.New("Invalid CSV")
-)
-
-// Returned []string value is in left to right as in csv string.
-func ParseCSV(csv string) ([]string, error) {
-	tokens := make([]string, 0, 1)
-
-	if len(csv) < 1 {
-		return tokens, InvalidCSV
-	} else if csv[len(csv)-1] != ',' {
-		csv += string(',')
-	}
-	var quote bool
-	var comma int
-	for i, char := range csv {
-		if char == '"' {
-			quote = !quote
-		} else if !quote && char == ' ' {
-			return tokens, InvalidCSV
-		} else if !quote && char == ',' {
-			token := strings.TrimSpace(csv[comma:i])
-			comma = i + 1
-			if len(token) < 1 {
-				return tokens, InvalidCSV
-			}
-			tokens = append(tokens, token)
-		}
-	}
-	if quote {
-		return tokens, InvalidCSV
-	}
-
-	return tokens, nil
-}
-
-type CSV_Builder struct {
-	builder strings.Builder
-}
-
-func (cb *CSV_Builder) Append(value ...string) {
-
-}
-
-func (cb *CSV_Builder) String() string {
-	return ""
-}
-
-var (
 	InvalidAttributeList error = errors.New("Invalid attribute list")
 )
 
@@ -114,6 +66,11 @@ func ParseAttributeList(attributeList string) (AttributeList, error) {
 	return attributeValuePairs, nil
 }
 
-func (al *AttributeList) String() string{
+func (al *AttributeList) String() string {
 	return ""
+}
+
+func (al AttributeList) Close() error {
+	clear(al)
+	return nil
 }
