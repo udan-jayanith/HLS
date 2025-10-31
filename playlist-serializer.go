@@ -4,6 +4,8 @@ import (
 	"io"
 )
 
+//Build wrap quotes
+
 var (
 	//BlankLine is a blank line PlaylistToken.
 	BlankLine PlaylistToken = NewPlaylistToken(Blank, "")
@@ -39,7 +41,7 @@ type TagValue interface {
 	String() string
 }
 
-func NewPlaylistTag(tag PlaylistTag, value TagValue) PlaylistToken {
+func NewPlaylistTag(tagName PlaylistTag, value TagValue) PlaylistToken {
 
 }
 */
@@ -82,10 +84,15 @@ func (pl *Playlist) Close() error {
 // If some data is available but not len(p) bytes, Read conventionally returns what is available instead of waiting for more.
 // p[:n] data can be send to a clint for streaming.
 func (pl *Playlist) Read(p []byte) (n int, err error) {
-	if len(pl.buf) == 0 && pl.err == io.EOF {
-		return n, pl.err
-	} else if pl.err != nil && pl.err != io.EOF {
+	n = copy(p, pl.buf)
+	if n+1 >= len(pl.buf) {
+		pl.buf = make([]byte, 0)
+	} else {
+		pl.buf = pl.buf[n+1:]
+	}
+
+	if len(pl.buf) == 0 {
 		return n, pl.err
 	}
-	return copy(p, pl.buf), nil
+	return n, nil
 }

@@ -2,6 +2,8 @@ package HLS_test
 
 import (
 	"HLS"
+	"bufio"
+	"io"
 	"testing"
 )
 
@@ -43,4 +45,52 @@ func TestPlaylistTokenSerialize(t *testing.T) {
 	}
 }
 
-func TestPlaylist(t *testing.T) {}
+func TestPlaylist(t *testing.T) {
+	playlist := HLS.NewPlaylist()
+
+	playlist.AppendLine(HLS.NewPlaylistToken(HLS.Tag, HLS.EXTM3U))
+	playlist.AppendLine(HLS.NewPlaylistToken(HLS.Comment, "This is a comment"))
+	playlist.AppendLine(HLS.BlankLine)
+	playlist.AppendLine(HLS.NewPlaylistToken(HLS.URI, "http://media.example.com/first.ts"))
+	playlist.AppendLine(HLS.NewPlaylistToken(HLS.RelativeURI, "/third.ts"))
+
+	if err := playlist.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	testcases := []struct {
+		output string
+		err    error
+	}{
+		{
+			output: "#EXTM3U\n",
+		},
+		{
+			output: "#This is a comment\n",
+		},
+		{
+			output: "\n",
+		},
+		{
+			output: "http://media.example.com/first.ts\n",
+		},
+		{
+			output: "/third.ts\n",
+		},
+		{
+			output: "",
+			err: io.EOF,
+		},
+	}
+
+	rd := bufio.NewReader(&playlist)
+	for _, testcase := range testcases {
+		line, err := rd.ReadString('\n')
+		if err != testcase.err {
+			t.Fatal("Expected", testcase.err, "but got", err)
+		} else if line != testcase.output {
+			t.Fatal("Expected", testcase.output, "but got", line)
+		}
+	}
+
+}
