@@ -52,7 +52,12 @@ func ParseHLSTag(line string) (HLSTag, error) {
 // ToPlaylistToken returns the PlaylistToken token of the HLSTag
 func (ht *HLSTag) ToPlaylistToken() PlaylistToken {
 	return PlaylistToken{
-		Type:  Tag,
-		Value: fmt.Sprintf("%s:%s", ht.TagName, ht.Value),
+		Type: Tag,
+		Value: func(ht *HLSTag) string {
+			if strings.TrimSpace(ht.Value) == "" {
+				return ht.TagName
+			}
+			return fmt.Sprintf("%s:%s", ht.TagName, ht.Value)
+		}(ht),
 	}
 }

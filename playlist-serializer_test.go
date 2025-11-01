@@ -98,6 +98,37 @@ func TestPlaylist(t *testing.T) {
 
 }
 
+func TestPlaylist_SetHeader(t *testing.T) {
+	playlist := HLS.NewPlaylist()
+
+	err := playlist.SetHeader(7)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tokenizer := HLS.NewPlayListTokenizer(&playlist)
+
+	if token, err := tokenizer.Advance(); err != nil {
+		t.Fatal(err)
+	} else if token.Type != HLS.Tag {
+		t.Fatal("Expected", HLS.Tag.String(), "but got", token.Type.String())
+	} else if token.Value != "EXTM3U" {
+		t.Fatal("Expected EXTM3U but got", token.Value)
+	}
+
+	if token, err := tokenizer.Advance(); err != nil {
+		t.Fatal(err)
+	} else if token.Type != HLS.Tag {
+		t.Fatal("Expected", HLS.Tag.String(), "but got", token.Type.String())
+	} else if token.Value != "EXT-X-VERSION:7" {
+		t.Fatal("Expected EXT_X_VERSION:7 but got", token.Value)
+	}
+
+	if _, err := tokenizer.Advance(); err == nil {
+		t.Fatal("Expected error io.EOF but got nil")
+	}
+}
+
 func ExamplePlaylist() {
 	//This function serves a trailer to a movie in a media-playlist file.
 	http.HandleFunc("/watch/025252/dracula-trailer", func(w http.ResponseWriter, r *http.Request) {
