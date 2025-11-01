@@ -291,3 +291,11 @@ const (
 	// The EXT-X-RENDITION-REPORT, EXT-X-KEY, and EXT-X-MAP tags are
 	// already defined above; this area can be extended with vendor tags.
 )
+
+//Todo
+// Show examples for
+// - Playlist struct type.
+// - func ParseCSV(csv string) (csvs, error).
+// - func ParseAttributeList(attributeList string) (AttributeList, error)
+// - func ParseHLSTag(line string) (HLSTag, error)
+// - Decoding a HLS playlist.

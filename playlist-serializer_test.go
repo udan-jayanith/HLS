@@ -1,10 +1,13 @@
 package HLS_test
 
 import (
-	"github.com/udan-jayanith/HLS"
 	"bufio"
 	"io"
 	"testing"
+
+	"net/http"
+
+	"github.com/udan-jayanith/HLS"
 )
 
 func TestPlaylistTokenSerialize(t *testing.T) {
@@ -93,4 +96,96 @@ func TestPlaylist(t *testing.T) {
 		}
 	}
 
+}
+
+func TestPlaylist_SetHeader(t *testing.T) {
+	playlist := HLS.NewPlaylist()
+
+	err := playlist.SetHeader(7)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tokenizer := HLS.NewPlayListTokenizer(&playlist)
+
+	if token, err := tokenizer.Advance(); err != nil {
+		t.Fatal(err)
+	} else if token.Type != HLS.Tag {
+		t.Fatal("Expected", HLS.Tag.String(), "but got", token.Type.String())
+	} else if token.Value != "EXTM3U" {
+		t.Fatal("Expected EXTM3U but got", token.Value)
+	}
+
+	if token, err := tokenizer.Advance(); err != nil {
+		t.Fatal(err)
+	} else if token.Type != HLS.Tag {
+		t.Fatal("Expected", HLS.Tag.String(), "but got", token.Type.String())
+	} else if token.Value != "EXT-X-VERSION:7" {
+		t.Fatal("Expected EXT_X_VERSION:7 but got", token.Value)
+	}
+
+	if _, err := tokenizer.Advance(); err == nil {
+		t.Fatal("Expected error io.EOF but got nil")
+	}
+}
+
+func ExamplePlaylist() {
+	//This function serves a trailer to a movie in a media-playlist file.
+	http.HandleFunc("/watch/025252/dracula-trailer", func(w http.ResponseWriter, r *http.Request) {
+		playlist := HLS.NewPlaylist()
+
+		//SetHeader append tag EXTM3U and EXT_X_VERSION. 7 is the version.
+		err := playlist.SetHeader(7)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		{
+			if err := playlist.AppendTag(HLS.HLSTag{
+				TagName: HLS.EXTINF,
+				Value:   "10.1",
+			}); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+
+			if err := playlist.AppendLine(HLS.NewPlaylistToken(HLS.RelativeURI, "/pt1.ts")); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+
+		{
+			if err := playlist.AppendTag(HLS.HLSTag{
+				TagName: HLS.EXTINF,
+				Value:   "9",
+			}); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+
+			if err := playlist.AppendLine(HLS.NewPlaylistToken(HLS.RelativeURI, "/pt2.ts")); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+
+		{
+			if err := playlist.AppendTag(HLS.HLSTag{
+				TagName: HLS.EXTINF,
+				Value:   "30.5",
+			}); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+
+			if err := playlist.AppendLine(HLS.NewPlaylistToken(HLS.RelativeURI, "/pt3.ts")); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+
+		// Playlist must be closed before start reading.
+		playlist.Close()
+
+		rd := bufio.NewReader(&playlist)
+		rd.WriteTo(w)
+	})
+
+	// Serves MPEG-4(.ts) for dracula-trailer.
+	// ...
 }

@@ -2,6 +2,7 @@ package HLS
 
 import (
 	"io"
+	"strconv"
 )
 
 //Build wrap quotes
@@ -50,6 +51,23 @@ func NewPlaylist() Playlist {
 	}
 }
 
+// SetHeader append tag EXTM3U and EXT_X_VERSION.
+func (p *Playlist) SetHeader(version int) error {
+	p.AppendTag(HLSTag{
+		TagName: EXTM3U,
+	})
+
+	csv, err := ParseCSV(strconv.Itoa(version))
+	if err != nil {
+		return err
+	}
+	p.AppendTag(HLSTag{
+		TagName: EXT_X_VERSION,
+		Value:   csv.String(),
+	})
+	return nil
+}
+
 // AppendLine appends a PlaylistToken to underlying buffer for reading.
 func (p *Playlist) AppendLine(playlistToken PlaylistToken) error {
 	if p.err != nil {
@@ -64,9 +82,10 @@ func (p *Playlist) AppendTag(tag HLSTag) error {
 	return p.AppendLine(tag.ToPlaylistToken())
 }
 
-// Close closes the “pl *Playlist“ for AppendLine and reading.
+// Close closes the “pl *Playlist“ for AppendLine and reading and the
 // Read wait for closing until all data have been read (buffer must be empty to Read to return io.EOF).
 // If AppendLine gets executed after Closing AppendLine returns a error.
+// Playlist must be closed before start reading.
 func (pl *Playlist) Close() error {
 	if pl.err != nil {
 		return pl.err
