@@ -291,7 +291,3 @@ const (
 	// The EXT-X-RENDITION-REPORT, EXT-X-KEY, and EXT-X-MAP tags are
 	// already defined above; this area can be extended with vendor tags.
 )
-
-//Todo
-// Show examples for
-// - func ParseHLSTag(line string) (HLSTag, error)
