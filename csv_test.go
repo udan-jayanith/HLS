@@ -1,10 +1,13 @@
 package HLS_test
 
 import (
-	"github.com/udan-jayanith/HLS"
+	"fmt"
+	"log"
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/udan-jayanith/HLS"
 )
 
 func TestParseCSV(t *testing.T) {
@@ -106,4 +109,23 @@ func TestCSV_String(t *testing.T) {
 	if csvs.String() != input {
 		t.Fatal("Expected", input, "but got", csvs.String())
 	}
+}
+
+func ExampleParseCSV() {
+	// values is a []string
+	values, err := HLS.ParseCSV(`
+			Enumerated-String,1240x720,"Quoted String"
+		`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, csv := range values {
+		fmt.Println(csv)
+	}
+	//Output:
+	//Enumerated-String
+	//1240x720
+	//"Quoted String"
+
 }
