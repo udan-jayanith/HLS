@@ -1,8 +1,11 @@
 package HLS_test
 
 import (
-	"github.com/udan-jayanith/HLS"
+	"fmt"
+	"log"
 	"testing"
+
+	"github.com/udan-jayanith/HLS"
 )
 
 func TestParseHLSTag(t *testing.T) {
@@ -79,4 +82,17 @@ func TestToPlaylistToken(t *testing.T) {
 	} else if playlistToken.Serialize() != `#EXTINF:21.3,"title"`+"\n" {
 		t.Fatal("Expected", `#EXTINF:21.3,"title"`, "but got", playlistToken.Serialize())
 	}
+}
+
+func ExampleParseHLSTag() {
+	hlsTag, err := HLS.ParseHLSTag("#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=288000,RESOLUTION=256x144")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(hlsTag.TagName)
+	fmt.Println(hlsTag.Value)
+	//Output:
+	//EXT-X-STREAM-INF
+	//PROGRAM-ID=1,BANDWIDTH=288000,RESOLUTION=256x144
 }

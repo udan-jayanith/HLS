@@ -294,6 +294,4 @@ const (
 
 //Todo
 // Show examples for
-// - func ParseAttributeList(attributeList string) (AttributeList, error)
 // - func ParseHLSTag(line string) (HLSTag, error)
-// - Decoding a HLS playlist.
