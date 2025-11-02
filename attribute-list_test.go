@@ -1,9 +1,12 @@
 package HLS_test
 
 import (
-	"github.com/udan-jayanith/HLS"
+	"fmt"
+	"log"
 	"maps"
 	"testing"
+
+	"github.com/udan-jayanith/HLS"
 )
 
 func TestParseAttributeList(t *testing.T) {
@@ -131,4 +134,25 @@ func TestAttributeListString(t *testing.T) {
 		t.Log(output)
 		t.FailNow()
 	}
+}
+
+func ExampleParseAttributeList() {
+	//attributes is type AttributeList map[string]string
+	//AttributeList has method String which returns the attribute/value pair list of the map.
+	attributes, err := HLS.ParseAttributeList(`AVERAGE-BANDWIDTH=183689,BANDWIDTH=187492,CODECS="avc1.64002a",RESOLUTION=1920x1080,URI="v7/iframe_index.m3u8"`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	/*
+		map[string]string{
+				"AVERAGE-BANDWIDTH": "183689",
+				"BANDWIDTH":         "187492",
+				"CODECS":            `"avc1.64002a"`,
+				"RESOLUTION":        "1920x1080",
+				"URI":               `"v7/iframe_index.m3u8"`,
+			}
+	*/
+
+	fmt.Println(attributes["RESOLUTION"])
+	//Output: 1920x1080
 }

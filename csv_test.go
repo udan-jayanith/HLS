@@ -112,7 +112,8 @@ func TestCSV_String(t *testing.T) {
 }
 
 func ExampleParseCSV() {
-	// values is a []string
+	// values is a type csvs []string
+	// csvs type contains a method called String that returns csvs as a string of comma separated value.
 	values, err := HLS.ParseCSV(`
 			Enumerated-String,1240x720,"Quoted String"
 		`)
@@ -127,5 +128,4 @@ func ExampleParseCSV() {
 	//Enumerated-String
 	//1240x720
 	//"Quoted String"
-
 }
