@@ -3,3 +3,4 @@ HLS Go module implements [HTTP Live Streaming](https://datatracker.ietf.org/doc/
 
 Examples are available in ``./examples/serving-a-video``
 
+Documentation with examples are available at [pkg.go.dev/github.com/udan-jayanith/HLS](https://pkg.go.dev/github.com/udan-jayanith/HLS)
